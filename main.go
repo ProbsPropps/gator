@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strings"
 
 	"github.com/ProbsPropps/gator/internal/config"
 	"github.com/ProbsPropps/gator/internal/database"
@@ -36,9 +37,12 @@ func main(){
 	cmds.register("register", handlerRegister)
 	cmds.register("reset", handlerReset)
 	cmds.register("users", handlerUsers)
+	cmds.register("agg", handlerAgg)
+	cmds.register("addfeed", handlerAddFeed)
+	cmds.register("feeds", handlerFeeds)
 	args := os.Args[1:]
 	
-	baseCommands := []string{"reset", "users"}
+	baseCommands := []string{"reset", "users", "agg", "feeds"}
 
 	if len(args) < 1 {
 		fmt.Println("Error - main: Not enough arguments")
@@ -49,6 +53,12 @@ func main(){
 		fmt.Println("Error - main: Need a username")
 		os.Exit(1)
 	}
+
+	if len(args) < 3 && strings.Contains("addfeed", args[0]) {
+		fmt.Println("Error - main: Need a url")
+		os.Exit(1)
+	}
+
 	cmd := command{name: args[0], args: args}
 	if err = cmds.run(&s, cmd); err != nil {
 		fmt.Printf("Error - main: %v\n", err)

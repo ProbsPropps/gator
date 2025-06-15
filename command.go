@@ -5,6 +5,7 @@ import "fmt"
 type command struct {
 	name 	string
 	args	[]string
+	numArgs int
 }
 
 type commands struct {
