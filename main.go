@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/ProbsPropps/gator/internal/config"
 	"github.com/ProbsPropps/gator/internal/database"
@@ -33,6 +34,7 @@ func main(){
 	cmds.commandNames = make(map[string]func(*state, command) error)
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
+	cmds.register("reset", handlerReset)
 	args := os.Args[1:]
 	
 	if len(args) < 1 {
@@ -40,7 +42,7 @@ func main(){
 		os.Exit(1)
 	}
 
-	if len(args) < 2 {
+	if len(args) < 2 && !strings.Contains(args[0], "reset") {
 		fmt.Println("Error - main: Need a username")
 		os.Exit(1)
 	}
