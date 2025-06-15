@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"strings"
+	"slices"
 
 	"github.com/ProbsPropps/gator/internal/config"
 	"github.com/ProbsPropps/gator/internal/database"
@@ -35,14 +35,17 @@ func main(){
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
 	cmds.register("reset", handlerReset)
+	cmds.register("users", handlerUsers)
 	args := os.Args[1:]
 	
+	baseCommands := []string{"reset", "users"}
+
 	if len(args) < 1 {
 		fmt.Println("Error - main: Not enough arguments")
 		os.Exit(1)
 	}
 
-	if len(args) < 2 && !strings.Contains(args[0], "reset") {
+	if len(args) < 2 && !slices.Contains(baseCommands, args[0]) {
 		fmt.Println("Error - main: Need a username")
 		os.Exit(1)
 	}
