@@ -13,16 +13,16 @@ import (
 )
 
 func handlerLogin(s *state, cmd command) error {
-	if cmd.args == nil {
+	if cmd.Args == nil {
 		return errors.New("Error - handlerLogin: login expects a single argument")
 	}
 	
-	_, err := s.db.GetUser(context.Background(), cmd.args[1])
+	_, err := s.db.GetUser(context.Background(), cmd.Args[1])
 	if err == sql.ErrNoRows {
 		return fmt.Errorf("Error - handlerLogin: %v", err)
 	}
 
-	if err = s.cfg.SetUser(cmd.args[1]); err != nil {
+	if err = s.cfg.SetUser(cmd.Args[1]); err != nil {
 		return fmt.Errorf("Error - handlerLogin: %v", err)
 	}
 	fmt.Println("User has been set")
@@ -30,11 +30,11 @@ func handlerLogin(s *state, cmd command) error {
 }
 
 func handlerRegister(s *state, cmd command) error {
-	if cmd.args == nil {
+	if cmd.Args == nil {
 		return errors.New("Error - handlerRegister: register expects an argument")
 	}
 	
-	_, err := s.db.GetUser(context.Background(), cmd.args[1])
+	_, err := s.db.GetUser(context.Background(), cmd.Args[1])
 	if err != sql.ErrNoRows {
 		fmt.Println("Error - handlerRegister: user already in database")
 		os.Exit(1)
@@ -44,7 +44,7 @@ func handlerRegister(s *state, cmd command) error {
 		ID: uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Name: cmd.args[1],
+		Name: cmd.Args[1],
 	
 	})
 	if err != nil {
@@ -52,7 +52,7 @@ func handlerRegister(s *state, cmd command) error {
 	}
 
 	
-	s.cfg.SetUser(cmd.args[1])
+	s.cfg.SetUser(cmd.Args[1])
 	fmt.Printf("User was created:\n ID: %s  CreatedAt: %v  UpdatedAt: %v  Name: %s", user.ID, user.CreatedAt, user.UpdatedAt, user.Name)
 
 	return nil
@@ -100,8 +100,8 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("Error - handlerAddFeed: %v\n", err)
 	}
 
-	name := cmd.args[1]
-	url := cmd.args[2]
+	name := cmd.Args[1]
+	url := cmd.Args[2]
 	
 	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
 		ID: uuid.New(),
@@ -116,6 +116,18 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("Error - handlerAddFeed: %v\n", err)
 	}
 
+	feedFollow, err := s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{
+		ID: uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID: user.ID,
+		FeedID: feed.ID,
+	})
+
+	if err != nil {
+		return fmt.Errorf("Error - handlerAddFeed: %v\n", err)
+	}
+	fmt.Printf("Success! Created Feed Follow:\n%s\n%s", feedFollow.UserName, feedFollow.FeedName)
 	printFeed(feed)
 	return nil
 }
@@ -137,3 +149,5 @@ func handlerFeeds(s *state, cmd command) error {
 	}
 	return nil
 }
+
+

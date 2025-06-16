@@ -40,26 +40,28 @@ func main(){
 	cmds.register("agg", handlerAgg)
 	cmds.register("addfeed", handlerAddFeed)
 	cmds.register("feeds", handlerFeeds)
-	args := os.Args[1:]
+	cmds.register("follow", handlerFollow)
+	cmds.register("following", handlerFollowing)
+	Args := os.Args[1:]
 	
-	baseCommands := []string{"reset", "users", "agg", "feeds"}
+	baseCommands := []string{"reset", "users", "agg", "feeds", "following"}
 
-	if len(args) < 1 {
+	if len(Args) < 1 {
 		fmt.Println("Error - main: Not enough arguments")
 		os.Exit(1)
 	}
 
-	if len(args) < 2 && !slices.Contains(baseCommands, args[0]) {
+	if len(Args) < 2 && !slices.Contains(baseCommands, Args[0]) {
 		fmt.Println("Error - main: Need a username")
 		os.Exit(1)
 	}
 
-	if len(args) < 3 && strings.Contains("addfeed", args[0]) {
+	if len(Args) < 3 && strings.Contains("addfeed", Args[0]) {
 		fmt.Println("Error - main: Need a url")
 		os.Exit(1)
 	}
 
-	cmd := command{name: args[0], args: args}
+	cmd := command{Name: Args[0], Args: Args}
 	if err = cmds.run(&s, cmd); err != nil {
 		fmt.Printf("Error - main: %v\n", err)
 		os.Exit(1)
