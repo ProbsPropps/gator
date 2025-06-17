@@ -53,7 +53,7 @@ func handlerRegister(s *state, cmd command) error {
 
 	
 	s.cfg.SetUser(cmd.Args[1])
-	fmt.Printf("User was created:\n ID: %s  CreatedAt: %v  UpdatedAt: %v  Name: %s", user.ID, user.CreatedAt, user.UpdatedAt, user.Name)
+	fmt.Printf("User was created:\n  -ID: %s\n  -CreatedAt: %v\n  -UpdatedAt: %v\n  -Name: %s\n", user.ID, user.CreatedAt, user.UpdatedAt, user.Name)
 
 	return nil
 	
@@ -80,17 +80,6 @@ func handlerUsers(s *state, cmd command) error {
 		}
 		fmt.Println(msg)
 	}
-	return nil
-}
-
-func handlerAgg(s *state, cmd command) error {
-	url := "https://www.wagslane.dev/index.xml"
-	feed, err := fetchFeed(context.Background(), url)
-	if err != nil {
-		return fmt.Errorf("Error - handlerAgg: %v\n", err)
-	}
-	
-	fmt.Println(feed)
 	return nil
 }
 
